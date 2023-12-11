@@ -1,42 +1,8 @@
 import { Express, Request, Response } from "express";
 import * as dao from "./dao";
-import { create } from "domain";
-
-// cors, follows, wishlist follows and users
-
-/**
- * 
- * export interface WishlistProductInfo {
-  productId: string; ---------
-  buyerId: string | null;
-}
-
-export interface ProductInfo {
-  productId: string ----
-  title: string;
-  link: string;
-  tcin: string;
-  featureBullets: string[];
-  rating: number;
-  ratingsTotal: number;
-  mainImage: string;
-  price: number;
-}
-
-Follows {
-  follower: string  // usernames
-  followed: string  
-}
-
-WishlistFollows {
-  username: string 
-  wid: string 
-}
- */
 
 function wishlistRoutes(app: Express) {
   const getWishlistsForUser = async (req: Request, res: Response) => {
-    console.log("yo");
     const username = req.params.userId;
     const wishlists = await dao.findWishlistsForUser(username);
     res.json(wishlists);
