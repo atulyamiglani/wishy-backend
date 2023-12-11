@@ -23,8 +23,25 @@ function userRoutes(app: Express) {
       console.log(error);
     }
   };
-  const updateUser = async (req: Request, res: Response) => {};
-  const getUser = async (req: Request, res: Response) => {};
+  const updateUser = async (req: Request, res: Response) => {
+    try {
+      const { username } = req.params;
+      const status = await dao.updateUser(username, req.body);
+      const currentUser = await dao.findUserByUsername(username);
+      req.session["currentUser"] = currentUser;
+      res.json(status);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  const getUser = async (req: Request, res: Response) => {
+    try {
+      const user = await dao.findUserByUsername(req.params.username);
+      res.json(user);
+    } catch (error) {
+      console.log(error);
+    }
+  };
   const signOut = async (req: Request, res: Response) => {
     req.session.destroy(() => {});
     res.json(200);
@@ -33,17 +50,12 @@ function userRoutes(app: Express) {
     res.json(req.session["currentUser"]);
   };
 
-  // const getFollowers = async (req: Request, res: Response) => {};
-  // const getFollowing = async (req: Request, res: Response) => {};
-  // const getWishlistsFollowing = async (req: Request, res: Response) => {};
-  // const getWishlists = async (req: Request, res: Response) => {};
-
   app.post("/user/signup", signUp);
   app.post("/user/signin", signIn);
   app.put("/user/:username", updateUser);
   app.get("/user/:username", getUser);
-  app.post("/user/:username", signOut);
-  app.post("/user/:username", account);
+  app.post("/user/signout", signOut);
+  app.post("/user/account", account);
 }
 
 export default userRoutes;
