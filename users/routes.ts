@@ -24,7 +24,11 @@ function userRoutes(app: Express) {
     }
   };
   const updateUser = async (req: Request, res: Response) => {};
-  const getUser = async (req: Request, res: Response) => {};
+  const getUser = async (req: Request, res: Response) => {
+    console.log(req.params.username);
+    const user = await dao.findUserByUsername(req.params.username);
+    res.json(user);
+  };
   const signOut = async (req: Request, res: Response) => {
     req.session.destroy(() => {});
     res.json(200);

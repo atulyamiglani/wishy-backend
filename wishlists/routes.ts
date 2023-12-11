@@ -1,4 +1,6 @@
 import { Express, Request, Response } from "express";
+import * as dao from "./dao";
+import { create } from "domain";
 
 // cors, follows, wishlist follows and users
 
@@ -21,16 +23,6 @@ export interface ProductInfo {
   price: number;
 }
 
-export interface Wishlist {
-  wid: string; //unique id
-  title: string;
-  description: string;
-  productInfos: WishlistProductInfo[]; //product tcins and buyer ids
-  owner: string; //owner id
-  created: string;
-  lastUpdated: string;
-}
-
 Follows {
   follower: string  // usernames
   followed: string  
@@ -42,8 +34,42 @@ WishlistFollows {
 }
  */
 
-function wishlists(app: Express) {
-  const getWishlistsForUser = async (req: Request, res: Response) => {};
+function wishlistRoutes(app: Express) {
+  const getWishlistsForUser = async (req: Request, res: Response) => {
+    console.log("yo");
+    const username = req.params.userId;
+    const wishlists = await dao.findWishlistsForUser(username);
+    res.json(wishlists);
+  };
 
-  app.get("wishlists/:userId", getWishlistsForUser);
+  const getWishlistById = async (req: Request, res: Response) => {
+    const wid = req.params.wid;
+    const wishlist = await dao.findWishlistById(wid);
+    res.json(wishlist);
+  };
+
+  const createWishlist = async (req: Request, res: Response) => {
+    const wishlist = await dao.createWishlist(req.body);
+    res.json(wishlist);
+  };
+
+  const updateWishlist = async (req: Request, res: Response) => {
+    const wid = req.params.wid;
+    const wishlist = await dao.updateWishlist(wid, req.body);
+    res.json(wishlist);
+  };
+
+  const deleteWishlist = async (req: Request, res: Response) => {
+    const wid = req.params.wid;
+    const wishlist = await dao.deleteWishlist(wid);
+    res.json(wishlist);
+  };
+
+  app.get("/wishlists/:userId", getWishlistsForUser);
+  app.get("/wishlists/:wid", getWishlistById);
+  app.post("/wishlists", createWishlist);
+  app.put("/wishlists/:wid", updateWishlist);
+  app.delete("/wishlists/:wid", deleteWishlist);
 }
+
+export default wishlistRoutes;
