@@ -13,7 +13,7 @@ dotenv.config();
 // hack to store currentUser in a session
 declare module "express-session" {
   interface SessionData {
-    currentUser: Object;
+    currentUser: Object | null;
   }
 }
 
