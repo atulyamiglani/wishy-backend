@@ -1,6 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 import userRoutes from "./users/routes";
+import wishlistRoutes from "./wishlists/routes";
 import mongoose from "mongoose";
 import cors from "cors";
 import session, { SessionOptions } from "express-session";
@@ -43,5 +44,6 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 userRoutes(app);
+wishlistRoutes(app);
 
 app.listen(process.env.PORT || 4000);
