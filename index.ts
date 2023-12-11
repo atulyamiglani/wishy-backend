@@ -10,6 +10,7 @@ import userSchema from "./users/schema";
 import model from "./users/model";
 import userFollowRoutes from "./userFollows/routes";
 import wishlistFollowsRoutes from "./wishlistFollows/routes";
+import productRoutes from "./products/routes";
 
 dotenv.config();
 
@@ -49,5 +50,6 @@ userRoutes(app);
 wishlistRoutes(app);
 userFollowRoutes(app);
 wishlistFollowsRoutes(app);
+productRoutes(app);
 
 app.listen(process.env.PORT || 4000);
