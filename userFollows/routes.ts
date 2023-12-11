@@ -1,7 +1,7 @@
 import { Express, Request, Response } from "express";
 import * as dao from "./dao";
 
-function userRoutes(app: Express) {
+function userFollowRoutes(app: Express) {
   app.get("/user/followers/:username", async (req: Request, res: Response) => {
     const followers = await dao.findAllFollowers(req.params.username);
     res.json(followers);
@@ -31,4 +31,4 @@ function userRoutes(app: Express) {
   });
 }
 
-export default userRoutes;
+export default userFollowRoutes;

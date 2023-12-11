@@ -8,6 +8,8 @@ import session, { SessionOptions } from "express-session";
 import User from "./users/user.type";
 import userSchema from "./users/schema";
 import model from "./users/model";
+import userFollowRoutes from "./userFollows/routes";
+import wishlistFollowsRoutes from "./wishlistFollows/routes";
 
 dotenv.config();
 
@@ -45,5 +47,7 @@ app.get("/", (req: Request, res: Response) => {
 
 userRoutes(app);
 wishlistRoutes(app);
+userFollowRoutes(app);
+wishlistFollowsRoutes(app);
 
 app.listen(process.env.PORT || 4000);
