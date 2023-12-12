@@ -16,8 +16,10 @@ function userRoutes(app: Express) {
   const signIn = async (req: Request, res: Response) => {
     try {
       const { username, password } = req.body;
+      console.log(req.body);
       const currentUser = await dao.findUserByCredentials(username, password);
       req.session.currentUser = currentUser;
+      console.log(currentUser);
       res.json(currentUser);
     } catch (error) {
       console.log(error);
@@ -36,6 +38,7 @@ function userRoutes(app: Express) {
   };
   const getUser = async (req: Request, res: Response) => {
     try {
+      console.log("get user", req.params.username);
       const user = await dao.findUserByUsername(req.params.username);
       res.json(user);
     } catch (error) {
@@ -50,12 +53,25 @@ function userRoutes(app: Express) {
     res.json(req.session["currentUser"]);
   };
 
+  const getUserByName = async (req: Request, res: Response) => {
+    const { searchTerm } = req.body as { searchTerm: string };
+    let [firstName, lastName] = searchTerm.split(" ", 2);
+    let result = [];
+    if (!lastName) {
+      result = await dao.findUserByFirstName(firstName);
+    } else {
+      result = await dao.findUserByName(firstName, lastName);
+    }
+    res.json(result);
+  };
+
   app.post("/user/signup", signUp);
   app.post("/user/signin", signIn);
   app.put("/user/:username", updateUser);
   app.get("/user/:username", getUser);
   app.post("/user/signout", signOut);
   app.post("/user/account", account);
+  app.post("/user/search", getUserByName);
 }
 
 export default userRoutes;
