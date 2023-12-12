@@ -4,11 +4,13 @@ import * as dao from "./dao";
 function userFollowRoutes(app: Express) {
   app.get("/user/followers/:username", async (req: Request, res: Response) => {
     const followers = await dao.findAllFollowers(req.params.username);
+    console.log("getting followers for ", req.params.username, followers);
     res.json(followers);
   });
 
   app.get("/user/following/:username", async (req: Request, res: Response) => {
     const following = await dao.findAllFollowing(req.params.username);
+    console.log("getting followings for ", req.params.username, following);
     res.json(following);
   });
 
@@ -17,7 +19,9 @@ function userFollowRoutes(app: Express) {
       follower: string;
       followed: string;
     };
+    console.log(req.body);
     const relation = await dao.follow(follower, followed);
+    console.log("relation", relation);
     res.json(relation);
   });
 
