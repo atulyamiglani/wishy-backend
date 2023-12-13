@@ -9,13 +9,19 @@ function wishlistRoutes(app: Express) {
   };
 
   const getWishlistById = async (req: Request, res: Response) => {
+    //TODO: add error handling - improper url crashes the server
     const wid = req.params.wid;
     const wishlist = await dao.findWishlistById(wid);
     res.json(wishlist);
   };
 
   const createWishlist = async (req: Request, res: Response) => {
-    const wishlist = await dao.createWishlist(req.body);
+    const w = req.body as {
+      title: string;
+      description: string;
+      owner: string;
+    };
+    const wishlist = await dao.createWishlist(w);
     res.json(wishlist);
   };
 
@@ -32,7 +38,7 @@ function wishlistRoutes(app: Express) {
   };
 
   app.get("/wishlists/:userId", getWishlistsForUser);
-  app.get("/wishlists/:wid", getWishlistById);
+  app.get("/wishlist/:wid", getWishlistById);
   app.post("/wishlists", createWishlist);
   app.put("/wishlists/:wid", updateWishlist);
   app.delete("/wishlists/:wid", deleteWishlist);

@@ -3,7 +3,7 @@ const wishlistschema = new mongoose.Schema(
   {
     title: { type: String, required: true },
     description: String,
-    products: {
+    productInfos: {
       type: [{ productId: String, buyerId: [String, null] }],
       default: [],
     },
