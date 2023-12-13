@@ -115,7 +115,7 @@ function userRoutes(app: Express) {
       const wishlists = await Promise.all(wishlistsPromises).then((wl) => wl);
       const wishlistProductIds = wishlists
         .map((wishlist) => {
-          return wishlist?.products.map((prod) => prod.productId);
+          return wishlist?.productInfos.map((pr) => pr.productId);
         })
         .flat();
 
