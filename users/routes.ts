@@ -1,5 +1,10 @@
 import { Express, Request, Response } from "express";
 import * as dao from "./dao";
+import * as userFollowsDao from "./../userFollows/dao";
+import * as wishlistFollowsDao from "./../wishlistFollows/dao";
+import * as wishlistDao from "./../wishlists/dao";
+import * as productsDao from "./../products/dao";
+import { pid } from "process";
 
 function userRoutes(app: Express) {
   const signUp = async (req: Request, res: Response) => {
@@ -65,6 +70,66 @@ function userRoutes(app: Express) {
     res.json(result);
   };
 
+  const getFeed = async (req: Request, res: Response) => {
+    const { username } = req.params;
+    const user = await dao.findUserByUsername(username);
+    if (!user) {
+      res.sendStatus(404).json({ error: "user not found" });
+    } else if (user.role === "GIFTER") {
+      // wishlist relation that the user follows
+      const wishlistFollowing = await wishlistFollowsDao.findAllFollowing(
+        user.username
+      );
+
+      // find wishlist objects from wishlistids
+      const followWishlists = wishlistFollowing.map((followRelation) => {
+        return wishlistDao
+          .findWishlistById(followRelation.wishlistId)
+          .then((wish) => wish);
+      });
+      const result = await Promise.all(followWishlists).then((ws) => ws);
+
+      res.json(result);
+    } else {
+      // WISHER
+      // send products in wishlists you follow
+      const userFollowing = await userFollowsDao.findAllFollowing(
+        user.username
+      );
+
+      // following wishlist ids
+      const wishlistIdsPromises = userFollowing.map(
+        async (followingRelation) => {
+          return await wishlistFollowsDao.findAllFollowing(
+            followingRelation.followed
+          );
+        }
+      );
+      const wishlistIds = await Promise.all(wishlistIdsPromises).then((wi) =>
+        wi.flat()
+      );
+
+      const wishlistsPromises = wishlistIds.map((wid) => {
+        return wishlistDao.findWishlistById(wid.wishlistId);
+      });
+      const wishlists = await Promise.all(wishlistsPromises).then((wl) => wl);
+      const wishlistProductIds = wishlists
+        .map((wishlist) => {
+          return wishlist?.productInfos.map((pr) => pr.productId);
+        })
+        .flat();
+
+      const wishlistProductsPromises = wishlistProductIds.map(async (pId) => {
+        return await productsDao.findProductByTcin(pId as string); // should be fine
+      });
+
+      const wishlistProducts = await Promise.all(wishlistProductsPromises).then(
+        (p) => p
+      );
+      res.json(wishlistProducts);
+    }
+  };
+
   app.post("/user/signup", signUp);
   app.post("/user/signin", signIn);
   app.put("/user/:username", updateUser);
@@ -72,6 +137,7 @@ function userRoutes(app: Express) {
   app.post("/user/signout", signOut);
   app.post("/user/account", account);
   app.post("/user/search", getUserByName);
+  app.get("/user/home/:username", getFeed);
 }
 
 export default userRoutes;
