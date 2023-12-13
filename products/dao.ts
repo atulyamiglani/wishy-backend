@@ -8,3 +8,6 @@ export const findProductByTcin = (tcin: string) =>
   productsmodel.findOne({ tcin: tcin });
 export const deleteProduct = (tcin: string) =>
   productsmodel.findOneAndDelete({ tcin: tcin });
+
+export const getProducts = (numProducts: number) =>
+  productsmodel.find({}).limit(numProducts);
