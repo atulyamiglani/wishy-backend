@@ -8,6 +8,7 @@ function wishlistFollowsRoutes(app: Express) {
       const followers = await dao.findAllWishlistFollowers(
         req.params.wishlistId
       );
+      console.log("followers of" + req.params.wishlistId + ":", followers);
       res.json(followers);
     }
   );
