@@ -137,7 +137,7 @@ function userRoutes(app: Express) {
   app.post("/user/signout", signOut);
   app.post("/user/account", account);
   app.post("/user/search", getUserByName);
-  app.post("user/home/:username", getFeed);
+  app.get("/user/home/:username", getFeed);
 }
 
 export default userRoutes;
