@@ -9,3 +9,4 @@ export const updateWishlist = (id: string, wishlist: Wishlist) =>
   wishlistmodel.updateOne({ _id: id }, { $set: wishlist });
 export const deleteWishlist = (id: string) =>
   wishlistmodel.deleteOne({ _id: id });
+export const findAllWishlists = () => wishlistmodel.find({});

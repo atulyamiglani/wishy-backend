@@ -37,11 +37,17 @@ function wishlistRoutes(app: Express) {
     res.json(wishlist);
   };
 
+  const getAllWishlists = async (req: Request, res: Response) => {
+    const wishlists = await dao.findAllWishlists();
+    res.json(wishlists);
+  };
+
   app.get("/wishlists/:userId", getWishlistsForUser);
   app.get("/wishlist/:wid", getWishlistById);
   app.post("/wishlists", createWishlist);
   app.put("/wishlists/:wid", updateWishlist);
   app.delete("/wishlists/:wid", deleteWishlist);
+  app.get("/wishlists", getAllWishlists);
 }
 
 export default wishlistRoutes;
