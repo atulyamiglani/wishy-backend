@@ -14,12 +14,12 @@ import productRoutes from "./products/routes";
 
 dotenv.config();
 
-// hack to store currentUser in a session
-declare module "express-session" {
-  interface SessionData {
-    currentUser: Object | null;
-  }
-}
+// // hack to store currentUser in a session
+// declare module "express-session" {
+//   interface SessionData {
+//     currentUser: Object | null;
+//   }
+// }
 
 const CONNECTION_STRING =
   process.env.DB_CONNECTION_STRING || "mongodb://127.0.0.1:27017/Wishy";

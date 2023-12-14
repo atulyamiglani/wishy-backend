@@ -13,18 +13,22 @@ function userRoutes(app: Express) {
       res.status(400).json({ message: "Username already taken" });
     }
 
-    const currUser = await dao.createUser(req.body);
-    req.session.currentUser = currUser;
+    try {
+      const currentUser = await dao.createUser(req.body);
+      (req.session as any)["currentUser"] = currentUser;
 
-    res.json(currUser);
+      res.json(currentUser);
+    } catch (error) {
+      res.sendStatus(400);
+      console.log(error);
+    }
   };
   const signIn = async (req: Request, res: Response) => {
     try {
       const { username, password } = req.body;
-      console.log(req.body);
       const currentUser = await dao.findUserByCredentials(username, password);
-      req.session.currentUser = currentUser;
-      console.log(currentUser);
+      (req.session as any)["currentUser"] = currentUser;
+      console.log("curr user", currentUser);
       res.json(currentUser);
     } catch (error) {
       console.log(error);
@@ -35,7 +39,7 @@ function userRoutes(app: Express) {
       const { username } = req.params;
       const status = await dao.updateUser(username, req.body);
       const currentUser = await dao.findUserByUsername(username);
-      req.session["currentUser"] = currentUser;
+      (req.session as any)["currentUser"] = currentUser;
       res.json(currentUser);
     } catch (error) {
       console.log(error);
@@ -55,7 +59,8 @@ function userRoutes(app: Express) {
     res.json(200);
   };
   const account = async (req: Request, res: Response) => {
-    res.json(req.session["currentUser"]);
+    console.log(" user", (req.session as any)["currentUser"] as any);
+    res.json((req.session as any)["currentUser"] as any);
   };
 
   const getUserByName = async (req: Request, res: Response) => {
@@ -143,6 +148,7 @@ function userRoutes(app: Express) {
   app.post("/user/search", getUserByName);
   app.get("/home/:username", getFeed);
   app.get("/home/", getFeedNoUser);
+  app.get("/account", account);
 }
 
 export default userRoutes;
